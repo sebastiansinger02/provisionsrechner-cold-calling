@@ -4,12 +4,6 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Provisionsrechner Cold-Calling</title>
-
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#79A8FF">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   :root{
     --bg0:#070A12;
@@ -349,7 +343,10 @@ const SGV_PROVI = 150;
 
 const NK_CASHFLOW = [0,800,1600,2600,3600,4800,6000,7400,9400];
 const nkPipeline = nk => nk * 500;
-const nkCashflow = nk => nk >= NK_CASHFLOW.length ? NK_CASHFLOW[NK_CASHFLOW.length-1] : NK_CASHFLOW[nk];
+const nkCashflow = nk => {
+  if (nk <= 8) return NK_CASHFLOW[nk];
+  return NK_CASHFLOW[8] + (nk - 8) * 2000;
+};
 
 function calc(){
   const dials = (+dialsDaily.value||0) * (+workDays.value||0);
@@ -396,14 +393,5 @@ const earningsEl = document.getElementById('earnings');
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
 calc();
 </script>
-
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js");
-    });
-  }
-</script>
-
 </body>
 </html>
