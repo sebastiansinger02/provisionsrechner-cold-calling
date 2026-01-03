@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Provisionsrechner Cold-Calling</title>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#79A8FF">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card0:rgba(18,26,42,.86);
+    --card1:rgba(13,20,36,.86);
+    --muted:#A9B7CF;
+    --text:#EEF3FF;
+    --accent:#79A8FF;
+    --accent2:#58D3A1;
+    --warn:#FFCC66;
+    --line:rgba(255,255,255,.10);
+    --shadow:0 20px 60px rgba(0,0,0,.45);
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    color:var(--text);
+    font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    background:
+      radial-gradient(900px 480px at 15% 0%, rgba(121,168,255,.28), transparent 60%),
+      radial-gradient(900px 520px at 85% 10%, rgba(88,211,161,.18), transparent 55%),
+      linear-gradient(180deg,var(--bg1),var(--bg0));
+  }
+
+  .wrap{
+    max-width:1120px;
+    margin:34px auto;
+    padding:0 18px 44px;
+  }
+
+  header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:18px;
+  }
+
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+
+  .logo{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(135deg, rgba(121,168,255,.95), rgba(88,211,161,.85));
+    box-shadow:0 14px 30px rgba(0,0,0,.35);
+    display:grid;place-items:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .logo:before{
+    content:"";
+    position:absolute;inset:-40%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 55%);
+    transform:rotate(10deg);
+  }
+  .logo svg{position:relative;opacity:.95}
+
+  h1{
+    font-size:18px;
+    margin:0 0 4px 0;
+    letter-spacing:.2px
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    max-width:720px;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 12px;
+    color:var(--muted);
+    background:rgba(255,255,255,.03);
+    backdrop-filter: blur(6px);
+    box-shadow:0 10px 24px rgba(0,0,0,.25);
+  }
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    color:#D6E3FF;
+    font-size:12px;
+    background:rgba(121,168,255,.10);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1.15fr .85fr;
+    gap:14px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  .card{
+    background:linear-gradient(180deg, var(--card0), var(--card1));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:radial-gradient(600px 220px at 20% 0%, rgba(121,168,255,.10), transparent 55%),
+               radial-gradient(600px 260px at 80% 10%, rgba(88,211,161,.08), transparent 60%);
+    pointer-events:none;
+  }
+  .card > *{position:relative}
+
+  .card h2{
+    font-size:13px;
+    margin:0 0 12px 0;
+    color:#DCE7FF;
+    letter-spacing:.2px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .hicon{
+    width:18px;height:18px;opacity:.95;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr 165px;
+    gap:12px;
+    align-items:center;
+    margin:10px 0;
+  }
+
+  label{
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-height:22px;
+  }
+
+  .lchip{
+    width:30px;height:30px;border-radius:12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
+    display:grid;place-items:center;
+    flex:0 0 auto;
+  }
+  .lchip svg{opacity:.9}
+
+  input, select{
+    width:100%;
+    background:rgba(10,16,31,.75);
+    color:var(--text);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;
+    padding:10px 12px;
+    outline:none;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .06s ease;
+  }
+  input:hover, select:hover{border-color: rgba(122,167,255,.35)}
+  input:focus, select:focus{
+    border-color: rgba(121,168,255,.75);
+    box-shadow:0 0 0 4px rgba(121,168,255,.14);
+  }
+  input:active, select:active{transform: translateY(1px);}
+
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    overflow:hidden;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.06);
+  }
+  th,td{
+    padding:11px 11px;
+    border-bottom:1px solid var(--line)
+  }
+  th{
+    font-weight:600;
+    color:#DCE7FF;
+    text-align:left;
+    background:rgba(255,255,255,.04)
+  }
+  tr:last-child td{border-bottom:none}
+  td.num{
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .kpi{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+  }
+  @media (max-width: 520px){
+    .kpi{grid-template-columns:1fr}
+  }
+
+  .pill.k{
+    border-radius:16px;
+    padding:10px 12px;
+    background:rgba(255,255,255,.03);
+  }
+  .pill.k strong{
+    font-size:16px;
+    letter-spacing:.2px;
+  }
+
+  .kpi .pill.k:last-child{
+    grid-column: 1 / -1;
+    border-color: rgba(88,211,161,.22);
+    background: linear-gradient(180deg, rgba(88,211,161,.10), rgba(255,255,255,.02));
+  }
+  .kpi .pill.k:last-child strong{
+    font-size:18px;
+  }
+
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+    margin:12px 0 4px;
+  }
+
+  .foot{
+    margin-top:10px;
+    color:rgba(169,183,207,.9);
+    font-size:12px;
+  }
+
+  .kpi .pill.k:last-child strong{
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:.3px;
+  }
+
+
+  .percent{
+    padding-right:34px;
+    background-image: linear-gradient(transparent,transparent), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Ctext x='0' y='12' font-size='14' fill='%23A9B7CF'%3E%25%3C/text%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position: right 12px center;
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+<div style="font-size:26px;line-height:1;filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));">
+💸
+</div>
+</div>
+      <div>
+        <h1>Provisionsrechner Cold-Calling</h1>
+        
+      </div>
+    </div>
+    
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2><svg class="hicon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h14" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg> Eingaben</h2>
+
+      <div class="row">
+        <label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z" stroke="white" stroke-width="1.7"/></svg></span>Wählversuche pro Tag</label>
+        <input id="dialsDaily" type="number" min="0" step="1" value="300"/>
+      </div>
+      <div class="row">
+        <label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M7 3v3M17 3v3M4 8h16" stroke="white" stroke-width="1.7" stroke-linecap="round"/><path d="M6 6h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="white" stroke-width="1.7"/></svg></span>Arbeitstage pro Monat</label>
+        <input id="workDays" type="number" min="1" step="1" value="20"/>
+      </div>
+
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: Wählversuche → Entscheider</label><input id="r1" class="percent" type="number" value="10"/></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: Entscheider → EGv</label><input id="r2" class="percent" type="number" value="10"/></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: EGv → EGs</label><input id="r3" class="percent" type="number" value="70"/></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: EGs → SGv</label><input id="r4" class="percent" type="number" value="45"/></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: SGv → SGs</label><input id="r5" class="percent" type="number" value="75"/></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: SGs → NK</label><input id="r6" class="percent" type="number" value="20"/></div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <div class="row" style="margin-top:14px">
+        <label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M7 4v6m10-6v6" stroke="white" stroke-width="1.7" stroke-linecap="round"/><path d="M6 11h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z" stroke="white" stroke-width="1.7"/></svg></span>Modell (NK-Provision)</label>
+        <select id="model">
+          <option value="pipeline">Pipeline-Builder</option>
+          <option value="cashflow">Cashflow-Caller</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><svg class="hicon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V9m0 10h14M9 19V5m4 14v-8m4 8V7" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg> Ergebnis</h2>
+
+      <table>
+        <thead><tr><th>Stufe</th><th class="num" style="text-align:right">Monatsbasis</th><th class="num" style="text-align:right">Quote</th></tr></thead>
+        <tbody id="funnel"></tbody>
+      </table>
+
+      <div class="kpi">
+        
+        <div class="pill k"><span class="tag">Neukunden (gerundet)</span> <strong id="nkRounded">–</strong></div>
+        <div class="pill k"><span class="tag">Provision / Monat</span> <strong id="earnings">–</strong></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const eur = n => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(n);
+const pct = n => new Intl.NumberFormat('de-DE',{style:'percent'}).format(n);
+
+const EGS_PROVI = 30;
+const SGV_PROVI = 150;
+
+const NK_CASHFLOW = [0,800,1600,2600,3600,4800,6000,7400,9400];
+const nkPipeline = nk => nk * 500;
+const nkCashflow = nk => nk >= NK_CASHFLOW.length ? NK_CASHFLOW[NK_CASHFLOW.length-1] : NK_CASHFLOW[nk];
+
+function calc(){
+  const dials = (+dialsDaily.value||0) * (+workDays.value||0);
+  const r = [r1,r2,r3,r4,r5,r6].map(x => (+x.value||0)/100);
+
+  const ents = dials*r[0];
+  const egv  = ents*r[1];
+  const egs  = egv*r[2];
+  const sgv  = egs*r[3];
+  const sgs  = sgv*r[4];
+  const nkR  = sgs*r[5];
+
+  const nkRounded = Math.round(nkR);
+
+  const variable = egs*EGS_PROVI + sgv*SGV_PROVI;
+  const nkProvi = model.value==='pipeline' ? nkPipeline(nkRounded) : nkCashflow(nkRounded);
+  const earnings = variable + nkProvi;
+
+  const nkRawEl = document.getElementById('nkRaw');
+  if (nkRawEl) nkRawEl.textContent = nkR.toFixed(2);
+  nkRoundedEl.textContent = nkRounded;
+  earningsEl.textContent = eur(earnings);
+
+  const rows = [
+    ['Wählversuche',dials,null],
+    ['Entscheider',ents,r[0]],
+    ['EGv',egv,r[1]],
+    ['EGs',egs,r[2]],
+    ['SGv',sgv,r[3]],
+    ['SGs',sgs,r[4]],
+    ['NK',nkR,r[5]]
+  ];
+  funnel.innerHTML='';
+  rows.forEach(([n,v,q])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${n}</td><td class="num">${Number.isInteger(v) ? v : v.toFixed(2)}</td><td class="num">${q===null?'—':pct(q)}</td>`;
+    funnel.appendChild(tr);
+  });
+}
+
+const nkRoundedEl = document.getElementById('nkRounded');
+const earningsEl = document.getElementById('earnings');
+
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
+calc();
+</script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js");
+    });
+  }
+</script>
+
+</body>
+</html>
