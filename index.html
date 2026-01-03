@@ -268,6 +268,17 @@
   }
 
 </style>
+
+<script>
+function clampPercentInput(el){
+  let v = Number(el.value);
+  if (isNaN(v)) v = 0;
+  if (v < 0) v = 0;
+  if (v > 100) v = 100;
+  el.value = v;
+}
+</script>
+
 </head>
 <body>
 <div class="wrap">
@@ -299,12 +310,12 @@
         <input id="workDays" type="number" min="1" step="1" value="20"/>
       </div>
 
-      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: Wählversuche → Entscheider</label><input id="r1" class="percent" type="number" value="10"/></div>
-      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: Entscheider → EGv</label><input id="r2" class="percent" type="number" value="10"/></div>
-      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: EGv → EGs</label><input id="r3" class="percent" type="number" value="70"/></div>
-      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: EGs → SGv</label><input id="r4" class="percent" type="number" value="45"/></div>
-      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: SGv → SGs</label><input id="r5" class="percent" type="number" value="75"/></div>
-      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: SGs → NK</label><input id="r6" class="percent" type="number" value="20"/></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: Wählversuche → Entscheider</label><input id="r1" min="0" max="100" class="percent" type="number" value="10"/ oninput="clampPercentInput(this)"></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: Entscheider → EGv</label><input id="r2" min="0" max="100" class="percent" type="number" value="10"/ oninput="clampPercentInput(this)"></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: EGv → EGs</label><input id="r3" min="0" max="100" class="percent" type="number" value="70"/ oninput="clampPercentInput(this)"></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: EGs → SGv</label><input id="r4" min="0" max="100" class="percent" type="number" value="45"/ oninput="clampPercentInput(this)"></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: SGv → SGs</label><input id="r5" min="0" max="100" class="percent" type="number" value="75"/ oninput="clampPercentInput(this)"></div>
+      <div class="row"><label><span class="lchip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 14l5-5 4 4 7-7" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 7v6h-6" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Quote: SGs → NK</label><input id="r6" min="0" max="100" class="percent" type="number" value="20"/ oninput="clampPercentInput(this)"></div>
 
       <div class="divider" aria-hidden="true"></div>
 
@@ -350,7 +361,7 @@ const nkCashflow = nk => {
 
 function calc(){
   const dials = (+dialsDaily.value||0) * (+workDays.value||0);
-  const r = [r1,r2,r3,r4,r5,r6].map(x => (+x.value||0)/100);
+  const r = [r1,r2,r3,r4,r5,r6].map(x => Math.min(100, Math.max(0, +x.value || 0)) / 100);
 
   const ents = dials*r[0];
   const egv  = ents*r[1];
